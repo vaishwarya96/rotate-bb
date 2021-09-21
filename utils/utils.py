@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import torch
 
-def visualize_bb(img, label, coord, save_path):
+def visualize_bb(opt, img, label, coord, save_path):
 
-    MEAN = torch.tensor([0.485, 0.456, 0.406]).cuda()
-    STD = torch.tensor([0.229, 0.224, 0.225]).cuda()
+    MEAN = torch.tensor(opt.mean).cuda()
+    STD = torch.tensor(opt.std).cuda()
     img = img * STD[:, None, None] + MEAN[:, None, None]
     img = img.detach().cpu().numpy()
     img = np.transpose(img, (1,2,0)) * 255
@@ -17,13 +17,11 @@ def visualize_bb(img, label, coord, save_path):
     w = xmax - xmin
     h = ymax - ymin
     img = cv2.resize(img, (w,h))
-    d1 = label[0] * img.shape[0]
-    d2 = label[1] * img.shape[1]
-    h = label[2] * np.hypot(img.shape[0], img.shape[1])
-    theta = np.arctan(d1/d2)
+    w = label[0] * np.hypot(img.shape[0], img.shape[1])
+    h = label[1] * np.hypot(img.shape[0], img.shape[1])
+    theta = label[2] * np.pi
     theta = theta * 180/np.pi
 
-    w = np.hypot(d1,d2)
     h = round(h)
     w = round(w)
     xc, yc = int(img.shape[1]/2), int(img.shape[0]/2)

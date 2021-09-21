@@ -31,7 +31,7 @@ def val(opt, model):
             logits = model(img)
             
             #ious.append([1])
-            ious.append(skew_bbox_iou(label, logits).detach().cpu().numpy())
+            ious.append(skew_bbox_iou(opt, label, logits).detach().cpu().numpy())
             #print(logits, label)
             tot_rmse += rmse_tensor(logits, label)
 
@@ -42,7 +42,7 @@ def val(opt, model):
             save_path = os.path.join(opt.result_dir, str(iter)+'.png')
             if not os.path.exists(opt.result_dir):
                 os.makedirs(opt.result_dir, exist_ok=True)
-            visualize_bb(img, logit, coord, save_path)
+            visualize_bb(opt, img, logit, coord, save_path)
 
 
     return np.mean(ious)

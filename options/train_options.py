@@ -13,6 +13,8 @@ class TrainOptions():
 
         parser.add_argument('--image_size', default=64, type=int, help='Size of the image to be resized to')
         parser.add_argument('--batch_size', default=8, type=int, help='Batch size')
+        parser.add_argument('--mean', default=[0.485, 0.456, 0.406], help='Mean of the images')
+        parser.add_argument('--std', default=[0.229, 0.224, 0.225], help='Std. deviation of the images')
         parser.add_argument('--checkpoint_dir', type=str, default='checkpoint', help='Path to save the model')
         parser.add_argument('--beta1', type=float, default=0.0, help='momentum for Adam optimizer')
         parser.add_argument('--beta2', type=float, default=0.9, help='momentum for Adam optimizer')

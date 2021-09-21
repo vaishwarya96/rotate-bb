@@ -5,30 +5,28 @@ import cv2
 import torch
 import torch.nn as nn
 
-def get_rbox(label):
-    d1 = label[0] * 64
-    d2 = label[1] * 64
-    h = label[2] * np.hypot(64, 64)
-    theta = np.arctan(d1/d2)
+def get_rbox(opt,label):
+    w = label[0] * np.hypot(opt.image_size, opt.image_size)
+    h = label[1] * np.hypot(opt.image_size, opt.image_size)
+    theta = label[2] * np.pi
     theta = theta * 180/np.pi
 
-    w = np.hypot(d1,d2)
     h = round(h)
     w = round(w)
-    xc, yc = 32, 32
+    xc, yc = int(opt.image_size/2), int(opt.image_size/2)
     rect = (xc,yc), (h,w), 90-theta
     box = cv2.boxPoints(rect)
     box = np.int0(box)
     return box
 
-def skew_bbox_iou(box1, box2, GIoU=False):
+def skew_bbox_iou(opt, box1, box2, GIoU=False):
     ft = torch.cuda.FloatTensor
     box1 = box1.detach().cpu().numpy()
     box2 = box2.detach().cpu().numpy()
     ious = []
     for i in range(len(box2)):
-        r_b1 = get_rbox(box1[i])
-        r_b2 = get_rbox(box2[i])
+        r_b1 = get_rbox(opt, box1[i])
+        r_b2 = get_rbox(opt, box2[i])
 
         ious.append(skewiou(r_b1, r_b2))
 

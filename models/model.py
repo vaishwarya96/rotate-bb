@@ -29,10 +29,11 @@ class LeNet5(nn.Module):
                 #nn.ReLU(),
                 nn.Dropout(0.5),
                 nn.Linear(in_features=84, out_features=3),
-                nn.Sigmoid()
                 )
     def forward(self, x):
         x = self.feature_extractor(x)
         x = torch.flatten(x, 1)
         logits = self.regresser(x)
+        logits[:, :2] = nn.Sigmoid()(logits[:, :2])
+        logits[:, 2:] = nn.Tanh()(logits[:, 2:])
         return logits
